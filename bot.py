@@ -22,7 +22,7 @@ def on_message(msg):
         return
     text = msg['text']
 
-    command = text.split(' ')[0]
+    command = text.split(' ')[0].lower()
     arguments = text.split(' ')[1:]
 
     if command in ['add', '/add']:
