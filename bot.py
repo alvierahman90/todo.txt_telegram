@@ -25,15 +25,15 @@ def on_message(msg):
     command = text.split(' ')[0]
     arguments = text.split(' ')[1:]
 
-    if command in ['a', '/a']:
+    if command in ['add', '/add']:
         add_task(Task(" ".join(arguments)), chat_id)
     elif command in ['rm', '/rm']:
         rm_tasks(arguments, chat_id)
     elif command in ['ls', '/ls']:
         ls_tasks(arguments, chat_id)
-    elif command in ['d', '/d']:
+    elif command in ['do', '/do']:
         do_tasks(arguments, chat_id)
-    elif command in ['u', '/u']:
+    elif command in ['undo', '/undo']:
         undo_tasks(arguments, chat_id)
 
 
@@ -99,7 +99,7 @@ def set_task(task_id, task, chat_id):
 
 def ls_tasks(arguments, chat_id):
     tasks = get_tasks(chat_id)
-    counter = 1
+    counter = 0
     for i in range(len(tasks)):
         tasks[i] = (counter, tasks[i])
         counter += 1
