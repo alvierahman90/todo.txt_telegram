@@ -44,6 +44,7 @@ def add_task(task, chat_id):
     tasks = get_tasks(chat_id)
     tasks.append(task)
     set_tasks(tasks, chat_id)
+    bot.sendMessage(chat_id, "Added task '{0}'.".format(task))
 
 
 def rm_task(task, chat_id):
