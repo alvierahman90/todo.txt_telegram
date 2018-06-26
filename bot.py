@@ -51,14 +51,14 @@ def add_task(task, chat_id):
 
 def rm_task(task, chat_id):
     tasks = get_tasks(chat_id)
-    tasks.remove(task)
-    set_tasks(tasks)
-    bot.sendMessage(chat_id, "Removed task {0}".format(task))
+    set_tasks([x for x in tasks if str(task) != str(x)], chat_id)
+    bot.sendMessage(chat_id, "Removed task '{0}'".format(task))
 
 
-def rm_tasks(tasks, chat_id):
-    for i in tasks:
-        rm_task(i, chat_id)
+def rm_tasks(task_ids, chat_id):
+    tasks = get_tasks(chat_id)
+    for i in task_ids:
+        rm_task(tasks[int(i)], chat_id)
 
 
 def get_tasks(chat_id):
