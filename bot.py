@@ -37,7 +37,7 @@ def on_message(msg):
     elif command == '/undo':
         undo_tasks(arguments, chat_id)
     else:
-        add_task(text)
+        add_task(Task(text), chat_id)
 
 
 def add_task(task, chat_id):
