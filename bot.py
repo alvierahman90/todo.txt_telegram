@@ -36,6 +36,8 @@ def on_message(msg):
         do_tasks(arguments, chat_id)
     elif command == '/undo':
         undo_tasks(arguments, chat_id)
+    elif command == '/marco':
+        marco(chat_id)
     else:
         add_task(Task(text), chat_id)
 
@@ -167,6 +169,10 @@ def undo_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
+
+
+def marco(chat_id):
+    bot.sendMessage(chat_id, "Polo")
 
 
 MessageLoop(bot, on_message).run_as_thread()
