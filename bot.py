@@ -26,7 +26,7 @@ def on_message(msg):
     command = text.split(' ')[0].lower()
     arguments = text.split(' ')[1:]
 
-    if command in '/add':
+    if command == '/add':
         add_task(Task(" ".join(arguments)), chat_id)
     elif command == '/rm':
         rm_tasks(arguments, chat_id)
