@@ -53,6 +53,7 @@ def rm_task(task, chat_id):
     tasks = get_tasks(chat_id)
     tasks.remove(task)
     set_tasks(tasks)
+    bot.sendMessage(chat_id, "Removed task {0}".format(task))
 
 
 def rm_tasks(tasks, chat_id):
@@ -162,6 +163,7 @@ def do_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
+        bot.sendMessage(chat_id, "Did task {0}".format(i))
 
 
 def undo_tasks(task_ids, chat_id):
@@ -169,6 +171,7 @@ def undo_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
+        bot.sendMessage(chat_id, "Undid task {0}".format(i))
 
 
 def marco(chat_id):
