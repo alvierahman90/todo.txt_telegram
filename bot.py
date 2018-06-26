@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import telepot
+import re
 import json
 import time
 from Task import Task
@@ -102,18 +103,50 @@ def set_task(task_id, task, chat_id):
 def ls_tasks(arguments, chat_id):
     tasks = get_tasks(chat_id)
     counter = 0
+
     for i in range(len(tasks)):
         tasks[i] = (counter, tasks[i])
         counter += 1
 
     tasks = sorted(tasks, key=lambda tup: tup[1].text)
 
+    # create list of filters
+    filters = []
+    nfilters = []
+    for i in arguments:
+        if re.match("^f:", i) is not None:
+            filters.append(i.split("f:")[1])
+        elif re.match("^filter:", i) is not None:
+            filters.append(i.split("filter:")[1])
+        elif re.match("^!f:", i) is not None:
+            nfilters.append(i.split("!f:")[1])
+        elif re.match("^!filter:", i) is not None:
+            nfilters.append(i.split("!filter:")[1])
+
     text = "Tasks:\n"
     for i in tasks:
+        task = i[1]
         counter += 1
-        if i[1].done and "show-hidden" not in arguments:
+        filter_pass = True
+
+        # hidden texts
+        if task.done and ":show-hidden" not in arguments:
             continue
-        if i[1].done and "show-only-hidden" in arguments:
+        if task.done and ":only-hidden" in arguments:
+            continue
+
+        # filter checking
+        for ii in filters:
+            filter_pass = ii in task.text
+
+        # needs continue statement after each filter list
+        if not filter_pass:
+            continue
+
+        for ii in nfilters:
+            filter_pass = ii not in task.text
+
+        if not filter_pass:
             continue
 
         text += str(i[0]) + " " + i[1].text + "\n"
@@ -138,4 +171,4 @@ def undo_tasks(task_ids, chat_id):
 MessageLoop(bot, on_message).run_as_thread()
 
 while True:
-    time.sleep(10)
+    time.sleep(5)
