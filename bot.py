@@ -181,4 +181,4 @@ def marco(chat_id):
 MessageLoop(bot, on_message).run_as_thread()
 
 while True:
-    time.sleep(5)
+    time.sleep(1)
