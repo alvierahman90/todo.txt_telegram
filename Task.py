@@ -8,7 +8,8 @@ class Task:
         self.text = text
         self.completion_date = None
         self.creation_date = None
-        self.priority = None
+        # for sorting, lower than all alphabet letters
+        self.priority = "{"
         self.done = False
         self.projects = []
         self.contexts = []

@@ -149,7 +149,7 @@ def ls_tasks(arguments, chat_id):
         tasks[i] = (counter, tasks[i])
         counter += 1
 
-    tasks = sorted(tasks, key=lambda tup: tup[1].text)
+    tasks = sorted(tasks, key=lambda tup: tup[1].priority)
 
     # create list of filters
     filters = []
