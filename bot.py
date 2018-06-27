@@ -8,6 +8,10 @@ from Task import Task
 from telepot.loop import MessageLoop
 
 
+PROPERTY_LAST_COMMAND = "last_command"
+PROPERTY_LAST_ARGUMENTS = "last_arguments"
+
+
 with open('config.json') as file:
     config = json.loads(file.read())
 
@@ -25,6 +29,14 @@ def on_message(msg):
 
     command = text.split(' ')[0].lower()
     arguments = text.split(' ')[1:]
+
+    if command == '/last':
+        last_checks(chat_id)
+        command = get_property(PROPERTY_LAST_COMMAND, chat_id)
+        arguments = get_property(PROPERTY_LAST_ARGUMENTS, chat_id)
+    else:
+        set_property(PROPERTY_LAST_COMMAND, command, chat_id)
+        set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
 
     if command == '/add':
         add_task(Task(" ".join(arguments)), chat_id)
@@ -59,6 +71,29 @@ def rm_tasks(task_ids, chat_id):
     tasks = get_tasks(chat_id)
     for i in task_ids:
         rm_task(tasks[int(i)], chat_id)
+
+
+def get_property(property_name, chat_id):
+    with open(config['tasks_file']) as file:
+        info_dict = json.loads(file.read())
+
+    key = property_name + ":" + str(chat_id)
+
+    if key in info_dict.keys():
+        return info_dict[key]
+    else:
+        return None
+
+
+def set_property(property_name, value, chat_id):
+    with open(config['tasks_file']) as file:
+        info_dict = json.loads(file.read())
+
+    key = property_name + ":" + str(chat_id)
+    info_dict[key] = value
+
+    with open(config['tasks_file'], 'w') as file:
+        info_dict = file.write(json.dumps(info_dict))
 
 
 def get_tasks(chat_id):
@@ -176,6 +211,12 @@ def undo_tasks(task_ids, chat_id):
 
 def marco(chat_id):
     bot.sendMessage(chat_id, "Polo")
+
+
+def last_checks(chat_id):
+    if get_property(PROPERTY_LAST_ARGUMENTS, chat_id) is None or \
+            get_property(PROPERTY_LAST_COMMAND, chat_id) is None:
+        bot.sendMessage(chat_id, "No recorded last command")
 
 
 MessageLoop(bot, on_message).run_as_thread()
