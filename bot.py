@@ -51,6 +51,8 @@ def on_message(msg):
     elif command == '/marco':
         marco(chat_id)
     else:
+        set_property(PROPERTY_LAST_COMMAND, '/add', chat_id)
+        set_property(PROPERTY_LAST_ARGUMENTS, text.split(' '), chat_id)
         add_task(Task(text), chat_id)
 
 
