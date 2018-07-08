@@ -20,3 +20,5 @@ If no command is specified, it is assumed to be the add command.
 - use a real database instead of json files
 - multiple todo lists
 - default filters
+- Task object generates new string on __str__ method instead of relying on
+  accurate updating from functions
