@@ -200,7 +200,7 @@ def do_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
-        bot.sendMessage(chat_id, "Did task {0}".format(i))
+        bot.sendMessage(chat_id, "Did task {0}".format(task))
 
 
 def undo_tasks(task_ids, chat_id):
