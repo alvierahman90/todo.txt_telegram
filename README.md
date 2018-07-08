@@ -18,3 +18,5 @@ If no command is specified, it is assumed to be the add command.
 - favourite commands
 - reminders for tasks with due dates
 - use a real database instead of json files
+- multiple todo lists
+- default filters
