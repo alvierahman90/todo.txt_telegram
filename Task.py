@@ -63,7 +63,9 @@ class Task:
             elif i[0] == '-':
                 self.contexts.append(i.split('-')[1])
             elif ':' in i:
-                key, value = i.split(':')
+                arguments = i.split(':')
+                key = arguments[0]
+                value = ":".join(arguments[1:])
                 special = {key: value}
                 self.specials.append(special)
 

@@ -9,7 +9,7 @@ class TaskTestCase(unittest.TestCase):
     def test_basic(self):
         task = T("task")
         self.assertEqual(task.done, False)
-        self.assertEqual(task.priority, None)
+        self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
         self.assertEqual(task.creation_date, None)
         self.assertEqual(task.projects, [])
@@ -19,7 +19,7 @@ class TaskTestCase(unittest.TestCase):
     def test_basic_done(self):
         task = T("x basic test task")
         self.assertEqual(task.done, True)
-        self.assertEqual(task.priority, None)
+        self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
         self.assertEqual(task.creation_date, None)
         self.assertEqual(task.projects, [])
@@ -39,7 +39,7 @@ class TaskTestCase(unittest.TestCase):
     def test_prioritized_ignore_incorrect(self):
         task = T("(AA) prioritized test task")
         self.assertEqual(task.done, False)
-        self.assertEqual(task.priority, None)
+        self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
         self.assertEqual(task.creation_date, None)
         self.assertEqual(task.projects, [])
@@ -59,7 +59,7 @@ class TaskTestCase(unittest.TestCase):
     def test_with_creation_date(self):
         task = T("2018-06-24 test task")
         self.assertEqual(task.done, False)
-        self.assertEqual(task.priority, None)
+        self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
         self.assertEqual(task.creation_date,
                          datetime.datetime(2018, 6, 24, 0, 0))
@@ -70,7 +70,7 @@ class TaskTestCase(unittest.TestCase):
     def test_with_creation_and_completion_date(self):
         task = T("x 2018-06-24 2018-05-24 test task")
         self.assertEqual(task.done, True)
-        self.assertEqual(task.priority, None)
+        self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date,
                          datetime.datetime(2018, 6, 24, 0, 0))
         self.assertEqual(task.creation_date,
@@ -94,7 +94,7 @@ class TaskTestCase(unittest.TestCase):
     def test_special(self):
         task = T("special task special:value")
         self.assertEqual(task.done, False)
-        self.assertEqual(task.priority, None)
+        self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
         self.assertEqual(task.creation_date, None)
         self.assertEqual(task.projects, [])
