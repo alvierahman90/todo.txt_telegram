@@ -101,5 +101,15 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.contexts, [])
         self.assertEqual(task.specials, [{"special": "value"}])
 
+    def test_specials_with_colons(self):
+        task = T("give muffin her pen back due:2028-07-10T14:28:15Z+0100")
+        self.assertEqual(task.done, False)
+        self.assertEqual(task.priority, '{')
+        self.assertEqual(task.completion_date, None)
+        self.assertEqual(task.creation_date, None)
+        self.assertEqual(task.projects, [])
+        self.assertEqual(task.contexts, [])
+        self.assertEqual(task.specials, [{"due": "2028-07-10T14:28:15Z+0100"}])
+
 
 unittest.main()
