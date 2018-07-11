@@ -7,7 +7,9 @@ from Task import Task as T
 
 class TaskTestCase(unittest.TestCase):
     def test_basic(self):
-        task = T("task")
+        text = "task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, False)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
@@ -17,7 +19,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_basic_done(self):
-        task = T("x basic test task")
+        text = "x basic test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, True)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
@@ -27,7 +31,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_prioritized(self):
-        task = T("(A) prioritized test task")
+        text = "(A) prioritized test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, False)
         self.assertEqual(task.priority, 'A')
         self.assertEqual(task.completion_date, None)
@@ -37,7 +43,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_prioritized_ignore_incorrect(self):
-        task = T("(AA) prioritized test task")
+        text = "(AA) prioritized test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, False)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
@@ -47,7 +55,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_prioritized_done(self):
-        task = T("x (A) prioritized test task")
+        text = "x (A) prioritized test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, True)
         self.assertEqual(task.priority, 'A')
         self.assertEqual(task.completion_date, None)
@@ -57,7 +67,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_with_creation_date(self):
-        task = T("2018-06-24 test task")
+        text = "2018-06-24 test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, False)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
@@ -68,7 +80,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_with_creation_and_completion_date(self):
-        task = T("x 2018-06-24 2018-05-24 test task")
+        text = "x 2018-06-24 2018-05-24 test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, True)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date,
@@ -80,7 +94,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_with_creation_and_completion_and_priority_date(self):
-        task = T("x (B) 2018-06-24 2018-05-24 test task")
+        text = "x (B) 2018-06-24 2018-05-24 test task"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, True)
         self.assertEqual(task.priority, 'B')
         self.assertEqual(task.completion_date,
@@ -92,7 +108,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [])
 
     def test_special(self):
-        task = T("special task special:value")
+        text = "special task special:value"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, False)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)
@@ -102,7 +120,9 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.specials, [{"special": "value"}])
 
     def test_specials_with_colons(self):
-        task = T("give muffin her pen back due:2028-07-10T14:28:15Z+0100")
+        text = "give muffin her pen back due:2028-07-10T14:28:15Z+0100"
+        task = T(text)
+        self.assertEqual(str(task), text)
         self.assertEqual(task.done, False)
         self.assertEqual(task.priority, '{')
         self.assertEqual(task.completion_date, None)

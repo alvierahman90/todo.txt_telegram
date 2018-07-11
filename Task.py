@@ -5,7 +5,6 @@ from datetime import datetime as d
 class Task:
     def __init__(self, text):
         # defaults
-        self.text = text
         self.completion_date = None
         self.creation_date = None
         # for sorting, lower than all alphabet letters
@@ -53,8 +52,9 @@ class Task:
         if self.completion_date is not None:
             self.done = True
 
-        # the rest of the arguments may have projects, contexts, specials
+        self.body = " ".join(arguments[counter:])
 
+        # the rest of the arguments may have projects, contexts, specials
         for i in arguments[counter:]:
             if len(i) < 1:
                 continue
@@ -73,14 +73,28 @@ class Task:
         if self.done:
             return
         self.done = True
-        self.text = "x " + self.text
 
     def undo(self):
         if not self.done:
             return
 
         self.done = False
-        self.text = " ".join(self.text.split("x ")[1:])
 
     def __str__(self):
-        return self.text
+        text = ""
+
+        if self.done:
+            text += "x "
+
+        if self.priority != '{':
+            text += '(' + self.priority + ') '
+
+        if self.completion_date:
+            text += str(self.completion_date).split(' ')[0] + ' '
+
+        if self.creation_date:
+            text += str(self.creation_date).split(' ')[0] + ' '
+
+        text += self.body
+
+        return text
