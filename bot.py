@@ -98,7 +98,7 @@ def set_property(property_name, value, chat_id):
         info_dict = file.write(json.dumps(info_dict))
 
 
-def get_tasks(chat_id):
+def get_tasks(chat_id, raw=False):
     with open(config['tasks_file']) as file:
         tasks_dict = json.loads(file.read())
 
@@ -109,6 +109,9 @@ def get_tasks(chat_id):
 
     if chat_id not in tasks_dict:
         tasks_dict[chat_id] = ""
+
+    if raw:
+        return tasks_dict[chat_id]
 
     tasks = []
     for i in tasks_dict[chat_id].split('\n'):
