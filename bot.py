@@ -145,8 +145,8 @@ def ls_tasks(arguments, chat_id):
     tasks = get_tasks(chat_id)
     counter = 0
 
-    for i in range(len(tasks)):
-        tasks[i] = (counter, tasks[i])
+    for i, value in enumerate(tasks, start=0):
+        tasks[i] = (counter, value)
         counter += 1
 
     tasks = sorted(tasks, key=lambda tup: tup[1].priority)
