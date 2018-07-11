@@ -48,6 +48,8 @@ def on_message(msg):
         do_tasks(arguments, chat_id)
     elif command == '/undo':
         undo_tasks(arguments, chat_id)
+    elif command == '/export':
+        export_tasks(chat_id)
     elif command == '/marco':
         marco(chat_id)
     else:
@@ -212,6 +214,17 @@ def undo_tasks(task_ids, chat_id):
         task.undo()
         set_task(int(i), task, chat_id)
         bot.sendMessage(chat_id, "Undid task {0}".format(i))
+
+
+def export_tasks(chat_id):
+    text = get_tasks(chat_id, raw=True)
+    if text == "":
+        bot.sendMessage(chat_id, "No tasks.")
+        return
+
+    bot.sendMessage(chat_id, "RAW:")
+    bot.sendMessage(chat_id, text)
+    return
 
 
 def marco(chat_id):
