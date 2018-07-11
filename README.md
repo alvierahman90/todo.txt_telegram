@@ -14,7 +14,6 @@ If no command is specified, it is assumed to be the add command.
 
 
 ## todo
-- exporting all tasks
 - favourite commands
 - reminders for tasks with due dates
 - use a real database instead of json files
@@ -22,3 +21,4 @@ If no command is specified, it is assumed to be the add command.
 - default filters
 - `Task` object generates new string on `__str__` method instead of relying on
   accurate updating from functions
+- ~~exporting all tasks~~
