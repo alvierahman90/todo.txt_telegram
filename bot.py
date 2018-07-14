@@ -130,7 +130,7 @@ def set_tasks(tasks, chat_id):
     task_dict = get_tasks(None)
     texts = []
     for i in tasks:
-        texts.append(i.text)
+        texts.append(str(i))
 
     plaintext = "\n".join(texts)
 
@@ -183,19 +183,19 @@ def ls_tasks(arguments, chat_id):
 
         # filter checking
         for ii in filters:
-            filter_pass = ii in task.text
+            filter_pass = ii in str(task)
 
         # needs continue statement after each filter list
         if not filter_pass:
             continue
 
         for ii in nfilters:
-            filter_pass = ii not in task.text
+            filter_pass = ii not in str(task)
 
         if not filter_pass:
             continue
 
-        text += str(i[0]) + " " + i[1].text + "\n"
+        text += str(i[0]) + " " + str(i[1]) + "\n"
 
     bot.sendMessage(chat_id, text)
 
