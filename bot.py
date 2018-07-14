@@ -62,13 +62,13 @@ def add_task(task, chat_id):
     tasks = get_tasks(chat_id)
     tasks.append(task)
     set_tasks(tasks, chat_id)
-    bot.sendMessage(chat_id, "Added task '{0}'.".format(task))
+    bot.sendMessage(chat_id, "Added task: {0}".format(task))
 
 
 def rm_task(task, chat_id):
     tasks = get_tasks(chat_id)
     set_tasks([x for x in tasks if str(task) != str(x)], chat_id)
-    bot.sendMessage(chat_id, "Removed task '{0}'".format(task))
+    bot.sendMessage(chat_id, "Removed task: {0}".format(task))
 
 
 def rm_tasks(task_ids, chat_id):
@@ -205,7 +205,7 @@ def do_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
-        bot.sendMessage(chat_id, "Did task {0}".format(task))
+        bot.sendMessage(chat_id, "Did task: {0}".format(task))
 
 
 def undo_tasks(task_ids, chat_id):
@@ -213,7 +213,7 @@ def undo_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
-        bot.sendMessage(chat_id, "Undid task {0}".format(i))
+        bot.sendMessage(chat_id, "Undid task: {0}".format(i))
 
 
 def export_tasks(chat_id):
