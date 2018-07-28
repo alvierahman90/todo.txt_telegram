@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+#  coding=utf-8
 
-import telepot
 import re
 import json
 import time
-from Task import Task
+import telepot
 from telepot.loop import MessageLoop
+from Task import Task
 
 
 PROPERTY_LAST_COMMAND = "last_command"
@@ -13,17 +14,21 @@ PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
 
 with open('config.json') as file:
-    config = json.loads(file.read())
+    CONFIG = json.loads(file.read())
 
-bot = telepot.Bot(config['token'])
+BOT = telepot.Bot(CONFIG['token'])
 
 
 def on_message(msg):
+    """
+    The function which is run when MessageLoop receives an event
+    :param msg: The message object, passed by MessageLoop
+    """
     content_type, chat_type, chat_id = telepot.glance(msg)
     print(content_type, chat_type, chat_id)
 
     if content_type != 'text':
-        bot.sendMessage(chat_id, "Not a text command")
+        BOT.sendMessage(chat_id, "Not a text command")
         return
     text = msg['text']
 
@@ -59,50 +64,81 @@ def on_message(msg):
 
 
 def add_task(task, chat_id):
+    """
+    Adds a task
+    :param task: A Task object
+    :param chat_id: A numerical telegram chat_id
+    """
     tasks = get_tasks(chat_id)
     tasks.append(task)
     set_tasks(tasks, chat_id)
-    bot.sendMessage(chat_id, "Added task: {0}".format(task))
 
 
 def rm_task(task, chat_id):
+    """
+    Deletes a task
+    :param task: A Task object
+    :param chat_id: A numerical telegram chat_id
+    """
     tasks = get_tasks(chat_id)
     set_tasks([x for x in tasks if str(task) != str(x)], chat_id)
-    bot.sendMessage(chat_id, "Removed task: {0}".format(task))
+    BOT.sendMessage(chat_id, "Removed task: {0}".format(task))
 
 
 def rm_tasks(task_ids, chat_id):
+    """
+    Delete multiple tasks
+    :param task_ids: An iterable of IDs of task objects
+    :param chat_id: A numerical telegram chat_id
+    """
     tasks = get_tasks(chat_id)
     for i in task_ids:
         rm_task(tasks[int(i)], chat_id)
 
 
 def get_property(property_name, chat_id):
-    with open(config['tasks_file']) as file:
-        info_dict = json.loads(file.read())
+    """
+    // TODO figure out what this does
+    :param property_name:
+    :param chat_id:
+    :return:
+    """
+    with open(CONFIG['tasks_file']) as tasks_file:
+        info_dict = json.loads(tasks_file.read())
 
     key = property_name + ":" + str(chat_id)
 
     if key in info_dict.keys():
         return info_dict[key]
-    else:
-        return None
+    return None
 
 
 def set_property(property_name, value, chat_id):
-    with open(config['tasks_file']) as file:
-        info_dict = json.loads(file.read())
+    """
+    // TODO figure out what this does
+    :param property_name:
+    :param value:
+    :param chat_id:
+    """
+    with open(CONFIG['tasks_file']) as tasks_file:
+        info_dict = json.loads(tasks_file.read())
 
     key = property_name + ":" + str(chat_id)
     info_dict[key] = value
 
-    with open(config['tasks_file'], 'w') as file:
-        info_dict = file.write(json.dumps(info_dict))
+    with open(CONFIG['tasks_file'], 'w') as tasks_file:
+        info_dict = tasks_file.write(json.dumps(info_dict))
 
 
 def get_tasks(chat_id, raw=False):
-    with open(config['tasks_file']) as file:
-        tasks_dict = json.loads(file.read())
+    """
+    Returns a list of tasks
+    :param chat_id: A numerical telegram chat_id, or None to get tasks for all users
+    :param raw: Defaults to False, raw returns the tasks as strings
+    :return: Returns a python list of tasks, or a python dict if raw is True
+    """
+    with open(CONFIG['tasks_file']) as tasks_file:
+        tasks_dict = json.loads(tasks_file.read())
 
     if chat_id is None:
         return tasks_dict
@@ -123,10 +159,21 @@ def get_tasks(chat_id, raw=False):
 
 
 def get_task(task_id, chat_id):
+    """
+    Returns single task
+    :param task_id: ID of task
+    :param chat_id: Telegram chat_id
+    :return: Task object
+    """
     return get_tasks(chat_id)[task_id]
 
 
 def set_tasks(tasks, chat_id):
+    """
+    Overwrite the existing tasks with a new list
+    :param tasks: Iterable of Task objects
+    :param chat_id: Telegram chat_id
+    """
     task_dict = get_tasks(None)
     texts = []
     for i in tasks:
@@ -136,17 +183,28 @@ def set_tasks(tasks, chat_id):
 
     task_dict[chat_id] = plaintext
 
-    with open(config['tasks_file'], 'w+') as file:
-        file.write(json.dumps(task_dict))
+    with open(CONFIG['tasks_file'], 'w+') as tasks_file:
+        tasks_file.write(json.dumps(task_dict))
 
 
 def set_task(task_id, task, chat_id):
+    """
+    Overwrite a single task by ID
+    :param task_id: ID of the task
+    :param task: Task object itself
+    :param chat_id: Telegram chat_id
+    """
     tasks = get_tasks(chat_id)
     tasks[task_id] = task
     set_tasks(tasks, chat_id)
 
 
 def ls_tasks(arguments, chat_id):
+    """
+    Send a list of tasks to user
+    :param arguments: Iterable of strings
+    :param chat_id: Telegram chat_id
+    """
     tasks = get_tasks(chat_id)
     counter = 0
 
@@ -158,7 +216,7 @@ def ls_tasks(arguments, chat_id):
 
     # create list of filters
     filters = []
-    nfilters = []
+    nfilters = [] # inverse filter
     for i in arguments:
         if re.match("^f:", i) is not None:
             filters.append(i.split("f:")[1])
@@ -197,47 +255,68 @@ def ls_tasks(arguments, chat_id):
 
         text += str(i[0]) + " " + str(i[1]) + "\n"
 
-    bot.sendMessage(chat_id, text)
+    BOT.sendMessage(chat_id, text)
 
 
 def do_tasks(task_ids, chat_id):
+    """
+    Mark tasks by ID as done
+    :param task_ids: Iterable of task IDs
+    :param chat_id: Telegram chat_id
+    """
     for i in task_ids:
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
-        bot.sendMessage(chat_id, "Did task: {0}".format(task))
+        BOT.sendMessage(chat_id, "Did task: {0}".format(task))
 
 
 def undo_tasks(task_ids, chat_id):
+    """
+    Mark tasks as not done
+    :param task_ids: Iterable of task IDs
+    :param chat_id: Telegram chat_id
+    """
     for i in task_ids:
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
-        bot.sendMessage(chat_id, "Undid task: {0}".format(i))
+        BOT.sendMessage(chat_id, "Undid task: {0}".format(i))
 
 
 def export_tasks(chat_id):
+    """
+    Send all tasks to user as standard todo.txt format, to use in other apps
+    :param chat_id: Telegram chat_id
+    """
     text = get_tasks(chat_id, raw=True)
     if text == "":
-        bot.sendMessage(chat_id, "No tasks.")
+        BOT.sendMessage(chat_id, "No tasks.")
         return
 
-    bot.sendMessage(chat_id, "RAW:")
-    bot.sendMessage(chat_id, text)
-    return
+    BOT.sendMessage(chat_id, "RAW:")
+    BOT.sendMessage(chat_id, text)
 
 
 def marco(chat_id):
-    bot.sendMessage(chat_id, "Polo")
+    """
+    Sends the message "Polo" to user, tests if the bot is up
+    :param chat_id: Telegram chat_id
+    """
+    BOT.sendMessage(chat_id, "Polo")
 
 
 def last_checks(chat_id):
+    """
+    Checks if the user has sent a command already
+    :param chat_id: Telegram chat_id
+    """
     if get_property(PROPERTY_LAST_ARGUMENTS, chat_id) is None or \
             get_property(PROPERTY_LAST_COMMAND, chat_id) is None:
-        bot.sendMessage(chat_id, "No recorded last command")
+        BOT.sendMessage(chat_id, "No recorded last command")
 
 
-MessageLoop(bot, on_message).run_as_thread()
+MessageLoop(BOT, on_message).run_as_thread()
 
 while True:
     time.sleep(1)
