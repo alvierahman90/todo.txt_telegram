@@ -28,7 +28,7 @@ def on_message(msg):
     print(content_type, chat_type, chat_id)
 
     if content_type != 'text':
-        BOT.sendMessage(chat_id, "Not a text command")
+        BOT.sendMessage(chat_id, "I can only understand text, sorry.")
         return
     text = msg['text']
 
@@ -43,7 +43,21 @@ def on_message(msg):
         set_property(PROPERTY_LAST_COMMAND, command, chat_id)
         set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
 
-    if command == '/add':
+    process_command(command, arguments, chat_id)
+
+
+def process_command(command, arguments, chat_id):
+    """
+    Processes the command sent by user
+    :param command: The command itself i.e /add
+    :param arguments: Anything else after it as a python list
+    :param chat_id: Telegram chat_id
+    """
+    if command == '/start':
+        user_init(chat_id)
+    elif command == '/help':
+        user_help_info(chat_id, arguments=arguments)
+    elif command == '/add':
         add_task(Task(" ".join(arguments)), chat_id)
     elif command == '/rm':
         rm_tasks(arguments, chat_id)
@@ -57,10 +71,15 @@ def on_message(msg):
         export_tasks(chat_id)
     elif command == '/marco':
         marco(chat_id)
+    elif command == '/delete_all_tasks':
+        delete_all_tasks(chat_id)
     else:
         set_property(PROPERTY_LAST_COMMAND, '/add', chat_id)
-        set_property(PROPERTY_LAST_ARGUMENTS, text.split(' '), chat_id)
-        add_task(Task(text), chat_id)
+        set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
+
+        # command has to prefixed here since there is no actual command with a
+        # preceding slash
+        add_task(Task(command + " " + " ".join(arguments)), chat_id)
 
 
 def add_task(task, chat_id):
@@ -72,6 +91,7 @@ def add_task(task, chat_id):
     tasks = get_tasks(chat_id)
     tasks.append(task)
     set_tasks(tasks, chat_id)
+    BOT.sendMessage(chat_id, "Added task: {0}".format(task))
 
 
 def rm_task(task, chat_id):
@@ -152,6 +172,12 @@ def get_tasks(chat_id, raw=False):
         return tasks_dict[chat_id]
 
     tasks = []
+    # even if the string is empty, split will return a list of one, which
+    # which creates a task that doesn't exist and without any content when user
+    # has no tasks
+    if tasks_dict[chat_id] == "":
+        return tasks
+
     for i in tasks_dict[chat_id].split('\n'):
         tasks.append(Task(i))
 
@@ -206,6 +232,9 @@ def ls_tasks(arguments, chat_id):
     :param chat_id: Telegram chat_id
     """
     tasks = get_tasks(chat_id)
+    if len(tasks) < 1:
+        BOT.sendMessage(chat_id, "You have no tasks.")
+        return
     counter = 0
 
     for i, value in enumerate(tasks, start=0):
@@ -314,6 +343,32 @@ def last_checks(chat_id):
     if get_property(PROPERTY_LAST_ARGUMENTS, chat_id) is None or \
             get_property(PROPERTY_LAST_COMMAND, chat_id) is None:
         BOT.sendMessage(chat_id, "No recorded last command")
+
+def user_init(chat_id):
+    """
+    The function which is run to set up a new user
+    :param chat_id: Telegram chat_id
+    """
+    BOT.sendMessage(chat_id, "Welcome to todo.txt but as a Telegram bot. Run"
+                             " /help to get started")
+
+def user_help_info(chat_id, arguments=None):
+    """
+    The help text sent to user
+    :param chat_id: Telegram chat_id
+    """
+    BOT.sendMessage(chat_id, "Help command not implemented yet. ")
+
+
+def delete_all_tasks(chat_id):
+    """
+    Deletes all the tasks for a user. Also exports the tasks in case the user
+    made a mistake.
+    :param chat_id: Telegram chat id
+    """
+    export_tasks(chat_id)
+    set_tasks([], chat_id)
+    BOT.sendMessage(chat_id, "Deleted all tasks.")
 
 
 MessageLoop(BOT, on_message).run_as_thread()
