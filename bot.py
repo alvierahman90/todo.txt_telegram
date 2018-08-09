@@ -12,8 +12,10 @@ from Task import Task
 PROPERTY_LAST_COMMAND = "last_command"
 PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
+CONFIG_FILE='config.json'
 
-with open('config.json') as file:
+
+with open(CONFIG_FILE) as file:
     CONFIG = json.loads(file.read())
 
 BOT = telepot.Bot(CONFIG['token'])
@@ -269,23 +271,22 @@ def ls_tasks(arguments, chat_id):
             continue
 
         # filter checking
-        for ii in filters:
-            filter_pass = ii in str(task)
+        for j in filters:
+            filter_pass = j in str(task)
 
         # needs continue statement after each filter list
         if not filter_pass:
             continue
 
-        for ii in nfilters:
-            filter_pass = ii not in str(task)
+        for j in nfilters:
+            filter_pass = j not in str(task)
 
         if not filter_pass:
             continue
 
         text += str(i[0]) + " " + str(i[1]) + "\n"
 
-    BOT.sendMessage(chat_id, text)
-
+    BOT.sendMessage(chat_id, text) 
 
 def do_tasks(task_ids, chat_id):
     """
@@ -295,9 +296,10 @@ def do_tasks(task_ids, chat_id):
     """
     for i in task_ids:
         task = get_task(int(i), chat_id)
+        task_text = str(task)
         task.do()
         set_task(int(i), task, chat_id)
-        BOT.sendMessage(chat_id, "Did task: {0}".format(task))
+        BOT.sendMessage(chat_id, "Did task: {0}".format(task_text))
 
 
 def undo_tasks(task_ids, chat_id):
@@ -371,7 +373,9 @@ def delete_all_tasks(chat_id):
     BOT.sendMessage(chat_id, "Deleted all tasks.")
 
 
-MessageLoop(BOT, on_message).run_as_thread()
 
-while True:
-    time.sleep(1)
+if __name__ == "__main__":
+    MessageLoop(BOT, on_message).run_as_thread()
+
+    while True:
+        time.sleep(1)
