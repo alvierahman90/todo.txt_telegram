@@ -363,7 +363,10 @@ def user_help_info(chat_id, arguments=None):
     The help text sent to user
     :param chat_id: Telegram chat_id
     """
-    BOT.sendMessage(chat_id, "Help command not implemented yet. ")
+    with open('help.md') as help_file:
+        text = help_file.read()
+    text += "\n[View help on GitHub](alvierahman90.github.io/todo.txt_telegram/help.html)"
+    BOT.sendMessage(chat_id, text, parse_mode= 'Markdown')
 
 
 def delete_all_tasks(chat_id):
