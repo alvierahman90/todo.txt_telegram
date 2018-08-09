@@ -131,5 +131,18 @@ class TaskTestCase(unittest.TestCase):
         self.assertEqual(task.contexts, [])
         self.assertEqual(task.specials, [{"due": "2028-07-10T14:28:15Z+0100"}])
 
+    def test_standardized_priority_case(self):
+        text = "(a) standard prioritization test"
+        text_standardized_priority = "(A) standard prioritization test"
+        task = T(text)
+        self.assertEqual(str(task), text_standardized_priority)
+        self.assertEqual(task.done, False)
+        self.assertEqual(task.priority, 'A')
+        self.assertEqual(task.completion_date, None)
+        self.assertEqual(task.creation_date, None)
+        self.assertEqual(task.projects, [])
+        self.assertEqual(task.contexts, [])
+        self.assertEqual(task.specials, [])
+
 
 unittest.main()

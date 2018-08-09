@@ -24,6 +24,7 @@ class Task:
         priorities = match("\\([a-zA-Z]\\)", arguments[counter])
         if priorities is not None:
             self.priority = arguments[counter].split('(')[1].split(')')[0]
+            self.priority = self.priority.upper()
             counter += 1
 
         # try to get completion date if done
