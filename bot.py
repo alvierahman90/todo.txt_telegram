@@ -34,7 +34,7 @@ def on_message(msg):
         return
     text = msg['text']
 
-    command = text.split(' ')[0].lower()
+    command = text.split(' ')[0]
     arguments = text.split(' ')[1:]
 
     if command == '/last':
