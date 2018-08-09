@@ -272,14 +272,18 @@ def ls_tasks(arguments, chat_id):
 
         # filter checking
         for j in filters:
-            filter_pass = j in str(task)
+            if j not in str(task):
+                filter_pass = False
+                break
 
         # needs continue statement after each filter list
         if not filter_pass:
             continue
 
         for j in nfilters:
-            filter_pass = j not in str(task)
+            if j in str(task):
+                filter_pass = False
+                break
 
         if not filter_pass:
             continue
