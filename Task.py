@@ -21,7 +21,7 @@ class Task:
             counter += 1
 
         # try to get priority
-        priorities = match("\([a-zA-Z]\)", arguments[counter])
+        priorities = match("\\([a-zA-Z]\\)", arguments[counter])
         if priorities is not None:
             self.priority = arguments[counter].split('(')[1].split(')')[0]
             counter += 1
