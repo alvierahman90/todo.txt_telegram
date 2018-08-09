@@ -2,16 +2,7 @@
 A bot to hold your todo.txt tasks
 
 ## commands
-All commands require a preceding `/`.
-- add - add a task
-- rm - remove a task, requires task id
-- ls - list tasks, use 'f[ilter]:FILTERTEXT' syntax to search
-- do - complete a task, requires task id 
-- undo - undo a task, requires task id
-- marco - responds 'polo', tests the bot it up
-
-If no command is specified, it is assumed to be the add command.
-
+See [help.md](help.md)
 
 ## todo
 - favourite commands
