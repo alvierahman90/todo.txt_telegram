@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 #  coding=utf-8
+"""
+The bot script
+Run this, I guess
+"""
 
 import re
 import json
@@ -12,7 +16,7 @@ from Task import Task
 PROPERTY_LAST_COMMAND = "last_command"
 PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
-CONFIG_FILE='config.json'
+CONFIG_FILE = 'config.json'
 
 
 with open(CONFIG_FILE) as file:
@@ -58,7 +62,7 @@ def process_command(command, arguments, chat_id):
     if command == '/start':
         user_init(chat_id)
     elif command == '/help':
-        user_help_info(chat_id, arguments=arguments)
+        user_help_info(chat_id)
     elif command == '/add':
         add_task(Task(" ".join(arguments)), chat_id)
     elif command == '/rm':
@@ -290,7 +294,7 @@ def ls_tasks(arguments, chat_id):
 
         text += str(i[0]) + " " + str(i[1]) + "\n"
 
-    BOT.sendMessage(chat_id, text) 
+    BOT.sendMessage(chat_id, text)
 
 def do_tasks(task_ids, chat_id):
     """
@@ -358,7 +362,7 @@ def user_init(chat_id):
     BOT.sendMessage(chat_id, "Welcome to todo.txt but as a Telegram bot. Run"
                              " /help to get started")
 
-def user_help_info(chat_id, arguments=None):
+def user_help_info(chat_id):
     """
     The help text sent to user
     :param chat_id: Telegram chat_id
@@ -366,7 +370,7 @@ def user_help_info(chat_id, arguments=None):
     with open('help.md') as help_file:
         text = help_file.read()
     text += "\n[View help on GitHub](alvierahman90.github.io/todo.txt_telegram/help.html)"
-    BOT.sendMessage(chat_id, text, parse_mode= 'Markdown')
+    BOT.sendMessage(chat_id, text, parse_mode='Markdown')
 
 
 def delete_all_tasks(chat_id):
