@@ -17,6 +17,7 @@ PROPERTY_LAST_COMMAND = "last_command"
 PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
 CONFIG_FILE = 'config.json'
+ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
 with open(CONFIG_FILE) as file:
@@ -79,6 +80,8 @@ def process_command(command, arguments, chat_id):
         marco(chat_id)
     elif command == '/delete_all_tasks':
         delete_all_tasks(chat_id)
+    elif command == '/priority':
+        priority(chat_id, arguments)
     else:
         set_property(PROPERTY_LAST_COMMAND, '/add', chat_id)
         set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
@@ -383,6 +386,46 @@ def delete_all_tasks(chat_id):
     set_tasks([], chat_id)
     BOT.sendMessage(chat_id, "Deleted all tasks.")
 
+
+def priority(chat_id, arguments):
+    """
+    Changes the priority of a task
+    """
+    if len(arguments) < 2:
+        BOT.sendMessage(chat_id, "Not enough arguments: /priority PRIORITY"
+                                 "ID-OF-TASK [ID-OF-TASK...]")
+        return
+
+    priorities = list(ALPHABET)
+    priorities.append('NONE')
+
+    if arguments[0].upper() not in priorities:
+        BOT.sendMessage(chat_id, "Priority (first argument) must be letter or"
+                                 "'none'")
+        return
+
+    new_priority = arguments[0].upper()
+    # This is what no priority is defined as for the sorting
+    if new_priority == 'NONE':
+        new_priority = '{'
+    del arguments[0]
+
+    for i in arguments:
+        if not i.isnumeric():
+            BOT.sendMessage(chat_id, "Task IDs (second argument and beyond)"
+                                     "must be integers")
+            return
+
+    tasks = get_tasks(chat_id)
+
+    for i in arguments:
+        i = int(i)
+        BOT.sendMessage(chat_id, "Setting priority of '{}'.".format(tasks[i]))
+        tasks[i].priority = new_priority
+
+    set_tasks(tasks, chat_id)
+
+    return
 
 
 if __name__ == "__main__":
