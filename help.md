@@ -1,14 +1,24 @@
 # commands
 
-- /add <task> - Add a new task
-- /rm <task id> [id [id [id]...]] - Remove task(s)
-- /ls [filters] - list all tasks
-- /do <task id> [id [id [id]...]] - do task(s)
-- /undo <task id> [id [id [id]...]] - undo task(s)
-- /marco - test if bot is up
-- /help - show help information
-- /last - run the last command sent
-- /export - send all tasks as plaintext
-- /priority <priority> id [id [id [id]...]] - Set the priority of task(s)
-
 Anything sent without a command is assumed to be a new task to be added
+
+## actions on tasks 
+- `/add <task-text>` - Add a new task
+- `/do <id> [id [id [id]...]]` - Do task(s)
+- `/priority <priority> <id> [id [id [id]...]]` - Set the priority of task(s)
+- `/rm <id> [id [id [id]...]]` - Remove task(s)
+- `/undo <id> [id [id [id]...]]` - undo task(s)
+
+## general 
+- `/export` - Send all tasks as plaintext
+- `/help` - Show help information
+- `/ls [filters]` - List tasks
+- `/last` - Run the last command sent
+- `/marco` - Test if bot is up
+
+
+## /ls filters 
+- `f[ilter]:<text>` - Tasks must have this text in it
+- `!f[ilter]:<text>` - Tasks must **not** have this text in  it
+- `:show-done` - Show and include done tasks
+- `:only-done` - Show only done tasks
