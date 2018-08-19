@@ -459,7 +459,9 @@ def is_task_id_valid(chat_id, task_id):
     else:
         return fail()
 
-    if real_task_id < len(get_tasks(chat_id)) - 1:
+    print(real_task_id)
+    print(len(get_tasks(chat_id)))
+    if real_task_id < len(get_tasks(chat_id)):
         return real_task_id
     return fail()
 
