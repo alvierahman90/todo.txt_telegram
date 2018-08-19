@@ -122,6 +122,10 @@ def rm_tasks(task_ids, chat_id):
     """
     tasks = get_tasks(chat_id)
     for i in task_ids:
+        if not i.isnumeric():
+            BOT.sendMessage(chat_id, "Cannot rm task with id '{0}' - IDs are "
+                                     "integers".format(i))
+            continue
         rm_task(tasks[int(i)], chat_id)
 
 
@@ -200,7 +204,11 @@ def get_task(task_id, chat_id):
     :param chat_id: Telegram chat_id
     :return: Task object
     """
-    return get_tasks(chat_id)[task_id]
+    if not task_id.isnumeric():
+        BOT.sendMessage(chat_id, "Cannot get task with id '{0}' - IDs are "
+                                 "integers".format(i))
+        return None
+    return get_tasks(chat_id)[int(task_id)]
 
 
 def set_tasks(tasks, chat_id):
@@ -229,6 +237,10 @@ def set_task(task_id, task, chat_id):
     :param task: Task object itself
     :param chat_id: Telegram chat_id
     """
+    if not task_id.isnumeric():
+        BOT.sendMessage(chat_id, "Cannot set task with id '{0}' - IDs are "
+                                 "integers".format(i))
+        return
     tasks = get_tasks(chat_id)
     tasks[task_id] = task
     set_tasks(tasks, chat_id)
@@ -306,6 +318,10 @@ def do_tasks(task_ids, chat_id):
     :param chat_id: Telegram chat_id
     """
     for i in task_ids:
+        if not i.isnumeric():
+            BOT.sendMessage(chat_id, "Cannot do task with id '{0}' - IDs are "
+                                     "integers".format(i))
+            continue
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
@@ -319,6 +335,10 @@ def undo_tasks(task_ids, chat_id):
     :param chat_id: Telegram chat_id
     """
     for i in task_ids:
+        if not i.isnumeric():
+            BOT.sendMessage(chat_id, "Cannot do task with id '{0}' - IDs are "
+                                     "integers".format(i))
+            continue
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
