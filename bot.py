@@ -277,10 +277,11 @@ def ls_tasks(arguments, chat_id):
         counter += 1
         filter_pass = True
 
-        # hidden texts
-        if task.done and ":show-done" not in arguments:
+        if not task.done and ":only-done" in arguments:
             continue
-        if task.done and ":only-done" in arguments:
+        elif task.done and ":only-done" in arguments:
+            pass
+        elif task.done and ":show-done" not in arguments:
             continue
 
         # filter checking
@@ -289,7 +290,8 @@ def ls_tasks(arguments, chat_id):
                 filter_pass = False
                 break
 
-        # needs continue statement after each filter list
+        # needs continue statement after each filter list as filter_pass
+        # gets reset
         if not filter_pass:
             continue
 
