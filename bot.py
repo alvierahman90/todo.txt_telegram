@@ -122,6 +122,8 @@ def rm_tasks(task_ids, chat_id):
     """
     tasks = get_tasks(chat_id)
     for i in task_ids:
+        if not is_task_id_valid(chat_id, i):
+            continue
         rm_task(tasks[int(i)], chat_id)
 
 
@@ -198,9 +200,11 @@ def get_task(task_id, chat_id):
     Returns single task
     :param task_id: ID of task
     :param chat_id: Telegram chat_id
-    :return: Task object
+    :return: Task object or none if task_id is invalid
     """
-    return get_tasks(chat_id)[task_id]
+    if not is_task_id_valid(chat_id, task_id):
+        return None
+    return get_tasks(chat_id)[int(task_id)]
 
 
 def set_tasks(tasks, chat_id):
@@ -229,6 +233,8 @@ def set_task(task_id, task, chat_id):
     :param task: Task object itself
     :param chat_id: Telegram chat_id
     """
+    if not is_task_id_valid(chat_id, task_id):
+        return
     tasks = get_tasks(chat_id)
     tasks[task_id] = task
     set_tasks(tasks, chat_id)
@@ -306,6 +312,8 @@ def do_tasks(task_ids, chat_id):
     :param chat_id: Telegram chat_id
     """
     for i in task_ids:
+        if not is_task_id_valid(chat_id, i):
+            continue
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
@@ -319,6 +327,8 @@ def undo_tasks(task_ids, chat_id):
     :param chat_id: Telegram chat_id
     """
     for i in task_ids:
+        if not is_task_id_valid(chat_id, i):
+            continue
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
@@ -409,15 +419,12 @@ def priority(chat_id, arguments):
         new_priority = '{'
     del arguments[0]
 
-    for i in arguments:
-        if not i.isnumeric():
-            BOT.sendMessage(chat_id, "Task IDs (second argument and beyond)"
-                                     "must be integers")
-            return
-
     tasks = get_tasks(chat_id)
 
     for i in arguments:
+        if not is_task_id_valid(chat_id, i):
+            continue
+
         i = int(i)
         BOT.sendMessage(chat_id, "Setting priority of '{}'.".format(tasks[i]))
         tasks[i].priority = new_priority
@@ -425,6 +432,37 @@ def priority(chat_id, arguments):
     set_tasks(tasks, chat_id)
 
     return
+
+def is_task_id_valid(chat_id, task_id):
+    """
+    Checks if task_id provided is an integer and in the list
+    :param chat_id: Telegram chat id
+    :param task_id: ID of the task to check
+    :return: the task_id as integer if valid, otherwise False
+    """
+    def fail():
+        """
+        Prints failure message
+        """
+        BOT.sendMessage(chat_id, "Invalid task ID '{0}' - IDs are "
+                                 "integers and must actually exist (run /ls)"
+                                 "".format(str(task_id)))
+        return False
+
+    if isinstance(task_id, int):
+        real_task_id = int(task_id)
+    elif isinstance(task_id, str):
+        if task_id.isnumeric():
+            real_task_id = int(task_id)
+        else:
+            return fail()
+    else:
+        return fail()
+
+    if real_task_id < len(get_tasks(chat_id)) - 1:
+        return real_task_id
+    return fail()
+
 
 if __name__ == "__main__":
     MessageLoop(BOT, on_message).run_as_thread()
