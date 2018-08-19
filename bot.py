@@ -278,9 +278,9 @@ def ls_tasks(arguments, chat_id):
         filter_pass = True
 
         # hidden texts
-        if task.done and ":show-hidden" not in arguments:
+        if task.done and ":show-done" not in arguments:
             continue
-        if task.done and ":only-hidden" in arguments:
+        if task.done and ":only-done" in arguments:
             continue
 
         # filter checking
