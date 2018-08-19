@@ -307,10 +307,9 @@ def do_tasks(task_ids, chat_id):
     """
     for i in task_ids:
         task = get_task(int(i), chat_id)
-        task_text = str(task)
         task.do()
         set_task(int(i), task, chat_id)
-        BOT.sendMessage(chat_id, "Did task: {0}".format(task_text))
+        BOT.sendMessage(chat_id, "Did task {1}: {0}".format(str(task), i))
 
 
 def undo_tasks(task_ids, chat_id):
@@ -323,7 +322,7 @@ def undo_tasks(task_ids, chat_id):
         task = get_task(int(i), chat_id)
         task.undo()
         set_task(int(i), task, chat_id)
-        BOT.sendMessage(chat_id, "Undid task: {0}".format(i))
+        BOT.sendMessage(chat_id, "Undid task {1}: {0}".format(str(task), i))
 
 
 def export_tasks(chat_id):
@@ -426,7 +425,6 @@ def priority(chat_id, arguments):
     set_tasks(tasks, chat_id)
 
     return
-
 
 if __name__ == "__main__":
     MessageLoop(BOT, on_message).run_as_thread()
