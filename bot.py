@@ -383,6 +383,7 @@ def user_help_info(chat_id):
     """
     with open('help.md') as help_file:
         text = help_file.read()
+    text += "\ntodo.txt bot for Telegram version 1"
     text += "\n[View help on GitHub](alvierahman90.github.io/todo.txt_telegram/help.html)"
     BOT.sendMessage(chat_id, text, parse_mode='Markdown')
 
