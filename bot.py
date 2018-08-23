@@ -12,6 +12,8 @@ import telepot
 from telepot.loop import MessageLoop
 from Task import Task
 
+VERSION = "v1.0"
+
 
 PROPERTY_LAST_COMMAND = "last_command"
 PROPERTY_LAST_ARGUMENTS = "last_arguments"
@@ -383,7 +385,7 @@ def user_help_info(chat_id):
     """
     with open('help.md') as help_file:
         text = help_file.read()
-    text += "\ntodo.txt bot for Telegram version 1"
+    text += "\ntodo.txt bot for Telegram version {0}".format(VERSION)
     text += "\n[View help on GitHub](alvierahman90.github.io/todo.txt_telegram/help.html)"
     BOT.sendMessage(chat_id, text, parse_mode='Markdown')
 
