@@ -1,16 +1,24 @@
 # todo.txt as a Telegram bot
 A bot to hold your todo.txt tasks
 
+## setup and installation
+
+### requirements
+- fuzzywuzzy
+- telepot
+
+### install
+1. `git clone` the project or download it
+2. Create bot with [@botfather](https://t.me/botfather)
+3. create `config.json` in root directory of project:
+   ```json
+   {
+       "token": "285908433:AAHyxGFXtG37Ox_AvPPYB_J73iNpT7rk1JM"
+       , "tasks_file": "./tasks.json"
+   }
+   ```
+4. `cd` to project directory
+5. run `bot.py`
+
 ## commands
 See [help.md](help.md)
-
-## todo
-- favourite commands
-- reminders for tasks with due dates
-- use a real database instead of json files
-- multiple todo lists
-- default filters
-- ~~`Task` object generates new string on `__str__` method instead of relying on
-  accurate updating from functions~~
-- ~~exporting all tasks~~
-
