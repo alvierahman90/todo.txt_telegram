@@ -115,17 +115,6 @@ def add_task(task, chat_id):
     BOT.sendMessage(chat_id, "Added task: {0}".format(task))
 
 
-def rm_task(task, chat_id):
-    """
-    Deletes a task
-    :param task: A Task object
-    :param chat_id: A numerical telegram chat_id
-    """
-    tasks = get_tasks(chat_id)
-    set_tasks([x for x in tasks if str(task) != str(x)], chat_id)
-    BOT.sendMessage(chat_id, "Removed task: {0}".format(task))
-
-
 def rm_tasks(task_ids, chat_id):
     """
     Delete multiple tasks
@@ -136,7 +125,8 @@ def rm_tasks(task_ids, chat_id):
     for i in task_ids:
         if not is_task_id_valid(chat_id, i):
             continue
-        rm_task(tasks[int(i)], chat_id)
+        set_tasks([x for x in tasks if str(tasks[int(i)]) != str(x)], chat_id)
+        BOT.sendMessage(chat_id, "Removed task: {0}".format(tasks[int(i)]))
 
 
 def get_property(property_name, chat_id):
