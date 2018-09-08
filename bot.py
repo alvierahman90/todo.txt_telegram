@@ -10,9 +10,11 @@ import json
 import time
 import telepot
 from telepot.loop import MessageLoop
+from fuzzywuzzy import process
+from fuzzywuzzy import fuzz
 from Task import Task
 
-VERSION = "v1.0"
+VERSION = "v1.1"
 
 
 PROPERTY_LAST_COMMAND = "last_command"
@@ -84,6 +86,14 @@ def process_command(command, arguments, chat_id):
         delete_all_tasks(chat_id)
     elif command == '/priority':
         priority(chat_id, arguments)
+    elif command == '/fdo':
+        fuzzy_action(chat_id, ' '.join(arguments), do_tasks)
+    elif command == '/fundo':
+        fuzzy_action(chat_id, ' '.join(arguments), undo_tasks)
+    elif command == '/frm':
+        fuzzy_action(chat_id, ' '.join(arguments), rm_tasks)
+    elif command == '/fpriority':
+        fuzzy_priority(chat_id, arguments)
     else:
         set_property(PROPERTY_LAST_COMMAND, '/add', chat_id)
         set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
@@ -318,6 +328,7 @@ def do_tasks(task_ids, chat_id):
     for i in task_ids:
         if not is_task_id_valid(chat_id, i):
             continue
+
         task = get_task(int(i), chat_id)
         task.do()
         set_task(int(i), task, chat_id)
@@ -469,6 +480,42 @@ def is_task_id_valid(chat_id, task_id):
     if real_task_id < len(get_tasks(chat_id)):
         return real_task_id
     return fail()
+
+def fuzzy_get_task_id_from_text(chat_id, text):
+    """
+    Fuzzy searches for the closest match to the text string given
+    :param chat_id: Telegram chat_id
+    :param text: The string to fuzzy match
+    :return: task_id, matchness, task_text as a tuple
+    """
+
+    tasks = [str(x) for x in get_tasks(chat_id)]
+    task_text, matchness = process.extractOne(text, tasks,
+                                              scorer=fuzz.token_sort_ratio)
+    task_id = tasks.index(task_text)
+    return task_id, matchness
+
+def fuzzy_action(chat_id, text, function):
+    """
+    Marks the task most similar to `text` as done
+    :param chat_id: Telegram chat_id
+    :param text: text to match to a task to perform function on it
+    :param function: the function with which to process the task_id
+    """
+    task_id, matchness = fuzzy_get_task_id_from_text(chat_id, text)
+    return function([task_id], chat_id)
+
+
+def fuzzy_priority(chat_id, arguments):
+    """
+    Sets the priority of the closest matching task to text
+    :param chat_id: Telegram chat_id
+    :param text: text to match to a task to perform function on it
+    :param function: the function with which to process the task_id
+    """
+    text = ' '.join(arguments[1:])
+    task_id, matchness = fuzzy_get_task_id_from_text(chat_id, text)
+    return priority(chat_id, [arguments[0], task_id])
 
 
 if __name__ == "__main__":

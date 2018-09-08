@@ -9,6 +9,12 @@ Anything sent without a command is assumed to be a new task to be added
 - `/rm <id> [id [id [id]...]]` - Remove task(s)
 - `/undo <id> [id [id [id]...]]` - undo task(s)
 
+### fuzzy actions
+- `/fdo <text to match>`
+- `/fpriority <text to match>`
+- `/frm <text to match>`
+- `/fundo <text to match>`
+
 ## general 
 - `/export` - Send all tasks as plaintext
 - `/help` - Show help information
