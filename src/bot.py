@@ -22,6 +22,7 @@ PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
 CONFIG_FILE = 'config.json'
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+TASKS_FILE="/tasks/tasks.json"
 
 
 with open(CONFIG_FILE) as file:
@@ -136,7 +137,7 @@ def get_property(property_name, chat_id):
     :param chat_id:
     :return:
     """
-    with open(CONFIG['tasks_file']) as tasks_file:
+    with open(TASKS_FILE) as tasks_file:
         info_dict = json.loads(tasks_file.read())
 
     key = property_name + ":" + str(chat_id)
@@ -153,13 +154,13 @@ def set_property(property_name, value, chat_id):
     :param value:
     :param chat_id:
     """
-    with open(CONFIG['tasks_file']) as tasks_file:
+    with open(TASKS_FILE) as tasks_file:
         info_dict = json.loads(tasks_file.read())
 
     key = property_name + ":" + str(chat_id)
     info_dict[key] = value
 
-    with open(CONFIG['tasks_file'], 'w') as tasks_file:
+    with open(TASKS_FILE, 'w') as tasks_file:
         info_dict = tasks_file.write(json.dumps(info_dict))
 
 
@@ -170,7 +171,7 @@ def get_tasks(chat_id, raw=False):
     :param raw: Defaults to False, raw returns the tasks as strings
     :return: Returns a python list of tasks, or a python dict if raw is True
     """
-    with open(CONFIG['tasks_file']) as tasks_file:
+    with open(TASKS_FILE) as tasks_file:
         tasks_dict = json.loads(tasks_file.read())
 
     if chat_id is None:
@@ -224,7 +225,7 @@ def set_tasks(tasks, chat_id):
 
     task_dict[chat_id] = plaintext
 
-    with open(CONFIG['tasks_file'], 'w+') as tasks_file:
+    with open(TASKS_FILE, 'w+') as tasks_file:
         tasks_file.write(json.dumps(task_dict))
 
 

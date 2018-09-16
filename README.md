@@ -3,10 +3,6 @@ A bot to hold your todo.txt tasks
 
 ## setup and installation
 
-### requirements
-- fuzzywuzzy
-- telepot
-
 ### install
 1. `git clone` the project or download it
 2. Create bot with [@botfather](https://t.me/botfather)
@@ -17,8 +13,11 @@ A bot to hold your todo.txt tasks
        , "tasks_file": "./tasks.json"
    }
    ```
-4. `cd` to project directory
-5. run `bot.py`
+4. run `cp docker-compose.example docker-compose.yml` 
+5. run `mkdir YOUR_TASKS_DIRECTORY` 
+6. run `echo {} > YOUR_TASKS_DIRECTORY/tasks.json` 
+7. edit `docker-compose.yml` bot.volumes to match your directory with your tasks
+8. run `docker-compose up`
 
 ## commands
 See [help.md](help.md)
