@@ -9,8 +9,7 @@ A bot to hold your todo.txt tasks
 3. create `YOUR_CONFIG_DIRECTORY/config.json`:
    ```json
    {
-       "token": "285908433:AAHyxGFXtG37Ox_AvPPYB_J73iNpT7rk1JM"
-       , "tasks_file": "./tasks.json"
+       "token": "YOUR_BOT_TOKEN"
    }
    ```
 4. run `cp docker-compose.example docker-compose.yml` 
