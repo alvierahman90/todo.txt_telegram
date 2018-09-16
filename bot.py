@@ -12,7 +12,7 @@ import telepot
 from telepot.loop import MessageLoop
 from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
-from Task import Task
+from pydo import Task
 
 VERSION = "v1.1"
 
