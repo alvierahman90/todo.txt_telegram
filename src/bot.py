@@ -14,7 +14,7 @@ from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
 from pydo import Task
 
-VERSION = "v1.1"
+VERSION = "v1.1.1"
 
 
 PROPERTY_LAST_COMMAND = "last_command"
@@ -388,7 +388,7 @@ def user_help_info(chat_id):
     with open('help.md') as help_file:
         text = help_file.read()
     text += "\ntodo.txt bot for Telegram version {0}".format(VERSION)
-    text += "\n[View help on GitHub](alvierahman90.github.io/todo.txt_telegram/help.html)"
+    text += "\n[View help on GitHub](alvierahman90.github.io/todo.txt_telegram/src/help.html)"
     BOT.sendMessage(chat_id, text, parse_mode='Markdown')
 
 
