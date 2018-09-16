@@ -3,6 +3,6 @@ services:
         bot:
                 build: ./
                 volumes:
-                      - ./tasks:/tasks
+                      - ./config:/config
 volumes: 
-        tasks:
+        config:
