@@ -20,9 +20,9 @@ VERSION = "v1.1"
 PROPERTY_LAST_COMMAND = "last_command"
 PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
-CONFIG_FILE = 'config.json'
+CONFIG_FILE = '/config/config.json'
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-TASKS_FILE="/tasks/tasks.json"
+TASKS_FILE="/config/tasks.json"
 
 
 with open(CONFIG_FILE) as file:
