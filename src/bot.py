@@ -49,16 +49,16 @@ def on_message(msg):
 
     if command == '/last':
         last_checks(chat_id)
-        command = get_property(PROPERTY_LAST_COMMAND, chat_id)
-        arguments = get_property(PROPERTY_LAST_ARGUMENTS, chat_id)
+        command = get_property(chat_id, PROPERTY_LAST_COMMAND)
+        arguments = get_property(chat_id, PROPERTY_LAST_ARGUMENTS)
     else:
-        set_property(PROPERTY_LAST_COMMAND, command, chat_id)
-        set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
+        set_property(chat_id, PROPERTY_LAST_COMMAND, command)
+        set_property(chat_id, PROPERTY_LAST_ARGUMENTS, arguments)
 
-    process_command(command, arguments, chat_id)
+    process_command(chat_id, command, arguments)
 
 
-def process_command(command, arguments, chat_id):
+def process_command(chat_id, command, arguments):
     """
     Processes the command sent by user
     :param command: The command itself i.e /add
@@ -70,15 +70,15 @@ def process_command(command, arguments, chat_id):
     elif command == '/help':
         user_help_info(chat_id)
     elif command == '/add':
-        add_task(Task(" ".join(arguments)), chat_id)
+        add_task(chat_id, Task(" ".join(arguments)))
     elif command == '/rm':
-        rm_tasks(arguments, chat_id)
+        rm_tasks(chat_id, arguments)
     elif command == '/ls':
-        ls_tasks(arguments, chat_id)
+        ls_tasks(chat_id, arguments)
     elif command == '/do':
-        do_tasks(arguments, chat_id)
+        do_tasks(chat_id, arguments)
     elif command == '/undo':
-        undo_tasks(arguments, chat_id)
+        undo_tasks(chat_id, arguments)
     elif command == '/export':
         export_tasks(chat_id)
     elif command == '/marco':
@@ -96,15 +96,15 @@ def process_command(command, arguments, chat_id):
     elif command == '/fpriority':
         fuzzy_priority(chat_id, arguments)
     else:
-        set_property(PROPERTY_LAST_COMMAND, '/add', chat_id)
-        set_property(PROPERTY_LAST_ARGUMENTS, arguments, chat_id)
+        set_property(chat_id, PROPERTY_LAST_COMMAND, '/add')
+        set_property(chat_id, PROPERTY_LAST_ARGUMENTS, arguments)
 
         # command has to prefixed here since there is no actual command with a
         # preceding slash
-        add_task(Task(command + " " + " ".join(arguments)), chat_id)
+        add_task(chat_id, Task(command + " " + " ".join(arguments)))
 
 
-def add_task(task, chat_id):
+def add_task(chat_id, task):
     """
     Adds a task
     :param task: A Task object
@@ -112,11 +112,11 @@ def add_task(task, chat_id):
     """
     tasks = get_tasks(chat_id)
     tasks.append(task)
-    set_tasks(tasks, chat_id)
+    set_tasks(chat_id, tasks)
     BOT.sendMessage(chat_id, "Added task: {0}".format(task))
 
 
-def rm_tasks(task_ids, chat_id):
+def rm_tasks(chat_id, task_ids):
     """
     Delete multiple tasks
     :param task_ids: An iterable of IDs of task objects
@@ -126,11 +126,11 @@ def rm_tasks(task_ids, chat_id):
     for i in task_ids:
         if not is_task_id_valid(chat_id, i):
             continue
-        set_tasks([x for x in tasks if str(tasks[int(i)]) != str(x)], chat_id)
+        set_tasks(chat_id, [x for x in tasks if str(tasks[int(i)]) != str(x)])
         BOT.sendMessage(chat_id, "Removed task: {0}".format(tasks[int(i)]))
 
 
-def get_property(property_name, chat_id):
+def get_property(chat_id, property_name):
     """
     // TODO figure out what this does
     :param property_name:
@@ -147,7 +147,7 @@ def get_property(property_name, chat_id):
     return None
 
 
-def set_property(property_name, value, chat_id):
+def set_property(chat_id, property_name, value):
     """
     // TODO figure out what this does
     :param property_name:
@@ -198,7 +198,7 @@ def get_tasks(chat_id, raw=False):
     return tasks
 
 
-def get_task(task_id, chat_id):
+def get_task(chat_id, task_id):
     """
     Returns single task
     :param task_id: ID of task
@@ -210,7 +210,7 @@ def get_task(task_id, chat_id):
     return get_tasks(chat_id)[int(task_id)]
 
 
-def set_tasks(tasks, chat_id):
+def set_tasks(chat_id, tasks):
     """
     Overwrite the existing tasks with a new list
     :param tasks: Iterable of Task objects
@@ -229,7 +229,7 @@ def set_tasks(tasks, chat_id):
         tasks_file.write(json.dumps(task_dict))
 
 
-def set_task(task_id, task, chat_id):
+def set_task(chat_id, task_id, task):
     """
     Overwrite a single task by ID
     :param task_id: ID of the task
@@ -240,10 +240,10 @@ def set_task(task_id, task, chat_id):
         return
     tasks = get_tasks(chat_id)
     tasks[task_id] = task
-    set_tasks(tasks, chat_id)
+    set_tasks(chat_id, tasks)
 
 
-def ls_tasks(arguments, chat_id):
+def ls_tasks(chat_id, arguments):
     """
     Send a list of tasks to user
     :param arguments: Iterable of strings
@@ -310,7 +310,7 @@ def ls_tasks(arguments, chat_id):
 
     BOT.sendMessage(chat_id, text)
 
-def do_tasks(task_ids, chat_id):
+def do_tasks(chat_id, task_ids):
     """
     Mark tasks by ID as done
     :param task_ids: Iterable of task IDs
@@ -320,13 +320,13 @@ def do_tasks(task_ids, chat_id):
         if not is_task_id_valid(chat_id, i):
             continue
 
-        task = get_task(int(i), chat_id)
+        task = get_task(chat_id, int(i))
         task.do()
-        set_task(int(i), task, chat_id)
+        set_task(chat_id, int(i), task)
         BOT.sendMessage(chat_id, "Did task {1}: {0}".format(str(task), i))
 
 
-def undo_tasks(task_ids, chat_id):
+def undo_tasks(chat_id, task_ids):
     """
     Mark tasks as not done
     :param task_ids: Iterable of task IDs
@@ -335,9 +335,9 @@ def undo_tasks(task_ids, chat_id):
     for i in task_ids:
         if not is_task_id_valid(chat_id, i):
             continue
-        task = get_task(int(i), chat_id)
+        task = get_task(chat_id, int(i))
         task.undo()
-        set_task(int(i), task, chat_id)
+        set_task(chat_id, int(i), task)
         BOT.sendMessage(chat_id, "Undid task {1}: {0}".format(str(task), i))
 
 
@@ -368,8 +368,8 @@ def last_checks(chat_id):
     Checks if the user has sent a command already
     :param chat_id: Telegram chat_id
     """
-    if get_property(PROPERTY_LAST_ARGUMENTS, chat_id) is None or \
-            get_property(PROPERTY_LAST_COMMAND, chat_id) is None:
+    if get_property(chat_id, PROPERTY_LAST_ARGUMENTS) is None or \
+            get_property(chat_id, PROPERTY_LAST_COMMAND) is None:
         BOT.sendMessage(chat_id, "No recorded last command")
 
 def user_init(chat_id):
@@ -399,7 +399,7 @@ def delete_all_tasks(chat_id):
     :param chat_id: Telegram chat id
     """
     export_tasks(chat_id)
-    set_tasks([], chat_id)
+    set_tasks(chat_id, [])
     BOT.sendMessage(chat_id, "Deleted all tasks.")
 
 
@@ -436,7 +436,7 @@ def priority(chat_id, arguments):
         BOT.sendMessage(chat_id, "Setting priority of '{}'.".format(tasks[i]))
         tasks[i].priority = new_priority
 
-    set_tasks(tasks, chat_id)
+    set_tasks(chat_id, tasks)
 
     return
 
@@ -494,7 +494,7 @@ def fuzzy_action(chat_id, text, function):
     :param function: the function with which to process the task_id
     """
     task_id, matchness = fuzzy_get_task_id_from_text(chat_id, text)
-    return function([task_id], chat_id)
+    return function(chat_id, [task_id])
 
 
 def fuzzy_priority(chat_id, arguments):
