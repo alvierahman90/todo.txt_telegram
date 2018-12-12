@@ -14,7 +14,7 @@ from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
 from pydo import Task
 
-VERSION = "v1.1.1"
+VERSION = "v1.2.0fuzzymerge:untested"
 
 
 PROPERTY_LAST_COMMAND = "last_command"
@@ -37,7 +37,6 @@ def on_message(msg):
     :param msg: The message object, passed by MessageLoop
     """
     content_type, chat_type, chat_id = telepot.glance(msg)
-    print(content_type, chat_type, chat_id)
 
     if content_type != 'text':
         BOT.sendMessage(chat_id, "I can only understand text, sorry.")
@@ -72,13 +71,15 @@ def process_command(chat_id, command, arguments):
     elif command == '/add':
         add_task(chat_id, Task(" ".join(arguments)))
     elif command == '/rm':
-        rm_tasks(chat_id, arguments)
+        function_fuzzy_checker(chat_id, arguments, rm_tasks)
     elif command == '/ls':
         ls_tasks(chat_id, arguments)
     elif command == '/do':
-        do_tasks(chat_id, arguments)
+        # do_tasks(chat_id, arguments)
+        function_fuzzy_checker(chat_id, arguments, do_tasks)
     elif command == '/undo':
-        undo_tasks(chat_id, arguments)
+        # undo_tasks(chat_id, arguments)
+        function_fuzzy_checker(chat_id, arguments, undo_tasks)
     elif command == '/export':
         export_tasks(chat_id)
     elif command == '/marco':
@@ -86,15 +87,8 @@ def process_command(chat_id, command, arguments):
     elif command == '/delete_all_tasks':
         delete_all_tasks(chat_id)
     elif command == '/priority':
-        priority(chat_id, arguments)
-    elif command == '/fdo':
-        fuzzy_action(chat_id, ' '.join(arguments), do_tasks)
-    elif command == '/fundo':
-        fuzzy_action(chat_id, ' '.join(arguments), undo_tasks)
-    elif command == '/frm':
-        fuzzy_action(chat_id, ' '.join(arguments), rm_tasks)
-    elif command == '/fpriority':
-        fuzzy_priority(chat_id, arguments)
+        #priority(chat_id, arguments)
+        function_fuzzy_checker(chat_id, arguments, priority, ignore=[0], handler=fuzzy_priority_handler)
     else:
         set_property(chat_id, PROPERTY_LAST_COMMAND, '/add')
         set_property(chat_id, PROPERTY_LAST_ARGUMENTS, arguments)
@@ -407,6 +401,10 @@ def priority(chat_id, arguments):
     """
     Changes the priority of a task
     """
+    BOT.sendMessage(chat_id, repr(arguments))
+    for i, argument in enumerate(arguments):
+        BOT.sendMessage(chat_id, f"Argument {i}: {argument}")
+
     if len(arguments) < 2:
         BOT.sendMessage(chat_id, "Not enough arguments: /priority PRIORITY"
                                  "ID-OF-TASK [ID-OF-TASK...]")
@@ -466,8 +464,6 @@ def is_task_id_valid(chat_id, task_id):
     else:
         return fail()
 
-    print(real_task_id)
-    print(len(get_tasks(chat_id)))
     if real_task_id < len(get_tasks(chat_id)):
         return real_task_id
     return fail()
@@ -497,16 +493,43 @@ def fuzzy_action(chat_id, text, function):
     return function(chat_id, [task_id])
 
 
-def fuzzy_priority(chat_id, arguments):
+def fuzzy_priority_handler(chat_id, text, function):
     """
     Sets the priority of the closest matching task to text
     :param chat_id: Telegram chat_id
     :param text: text to match to a task to perform function on it
-    :param function: the function with which to process the task_id
+    :param function: the function with which to process the task_id (not used)
     """
-    text = ' '.join(arguments[1:])
-    task_id, matchness = fuzzy_get_task_id_from_text(chat_id, text)
-    return priority(chat_id, [arguments[0], task_id])
+    # TODO allow fuzzy_action to run on commands with more positional arguments
+    arguments = text.split(' ')
+    new_priority = arguments.pop(0)
+    task_id, matchness = fuzzy_get_task_id_from_text(chat_id, ' '.join(arguments))
+    BOT.sendMessage(chat_id, "fprepr: " + repr([new_priority, task_id]))
+    return priority(chat_id, [new_priority, task_id])
+
+def function_fuzzy_checker(chat_id, arguments, function, ignore=[], handler=fuzzy_action):
+    """
+    Checks if the all arguments are numerical and if they are it runs the
+    function, otherwise it runs fuzzy_action with that function. 
+    :param chat_id: Telegram chat_id
+    :param arguments: list of arguments form process_command
+    :param function: the function to be executed
+    :param ignore: a list of argument indexes to ignore when checking if to run fuzzy
+    :param handler: the function which executes the function in fuzzy mode
+    """
+
+    numerical = True
+    for i, val in enumerate(arguments):
+        if i in ignore:
+            continue
+        if not val.isdigit():
+            numerical = False
+            break
+
+    if not numerical:
+        handler(chat_id, ' '.join(arguments), function)
+    else:
+        function(chat_id, arguments)
 
 
 if __name__ == "__main__":
