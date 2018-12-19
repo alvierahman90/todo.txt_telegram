@@ -22,7 +22,7 @@ PROPERTY_LAST_ARGUMENTS = "last_arguments"
 
 CONFIG_FILE = '/config/config.json'
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-TASKS_FILE="/config/tasks.json"
+TASKS_FILE = "/config/tasks.json"
 
 
 with open(CONFIG_FILE) as file:
@@ -88,7 +88,8 @@ def process_command(chat_id, command, arguments):
         delete_all_tasks(chat_id)
     elif command == '/priority':
         #priority(chat_id, arguments)
-        function_fuzzy_checker(chat_id, arguments, priority, ignore=[0], handler=fuzzy_priority_handler)
+        function_fuzzy_checker(chat_id, arguments, priority, ignore=[0],
+                               handler=fuzzy_priority_handler)
     else:
         set_property(chat_id, PROPERTY_LAST_COMMAND, '/add')
         set_property(chat_id, PROPERTY_LAST_ARGUMENTS, arguments)
@@ -510,7 +511,7 @@ def fuzzy_priority_handler(chat_id, text, function):
 def function_fuzzy_checker(chat_id, arguments, function, ignore=[], handler=fuzzy_action):
     """
     Checks if the all arguments are numerical and if they are it runs the
-    function, otherwise it runs fuzzy_action with that function. 
+    function, otherwise it runs fuzzy_action with that function.
     :param chat_id: Telegram chat_id
     :param arguments: list of arguments form process_command
     :param function: the function to be executed
