@@ -4,16 +4,10 @@ Anything sent without a command is assumed to be a new task to be added
 
 ## actions on tasks 
 - `/add <task-text>` - Add a new task
-- `/do <id> [id [id [id]...]]` - Do task(s)
-- `/priority <priority> <id> [id [id [id]...]]` - Set the priority of task(s)
-- `/rm <id> [id [id [id]...]]` - Remove task(s)
-- `/undo <id> [id [id [id]...]]` - undo task(s)
-
-### fuzzy actions
-- `/fdo <text to match>`
-- `/fpriority <text to match>`
-- `/frm <text to match>`
-- `/fundo <text to match>`
+- `/do` - Mark a task as done
+- `/priority` - Set the priority of a task
+- `/rm` - Remove a task 
+- `/undo` - Mark a task as not done
 
 ## general 
 - `/export` - Send all tasks as plaintext

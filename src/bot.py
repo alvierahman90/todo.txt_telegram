@@ -14,7 +14,7 @@ from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
 from pydo import Task
 
-VERSION = "v1.2.0"
+VERSION = "v1.2.1"
 
 
 PROPERTY_LAST_COMMAND = "last_command"
