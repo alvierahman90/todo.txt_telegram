@@ -1,2 +1,5 @@
 config.json
 tasks.json
+db.json
+env
+__pycache__
