@@ -1,3 +1,5 @@
+# this is the old version of the bot!!
+
 # todo.txt as a Telegram bot
 A bot to hold your todo.txt tasks
 
