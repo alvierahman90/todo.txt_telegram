@@ -1,3 +1,0 @@
-telepot
-git+https://github.com/alvierahman90/pydo.git
-fuzzywuzzy
