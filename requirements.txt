@@ -1,7 +1,7 @@
 APScheduler==3.6.3
 certifi==2020.12.5
 cffi==1.14.4
-cryptography==3.3.1
+cryptography==3.3.2
 fuzzywuzzy==0.18.0
 pycparser==2.20
 pydo.txt==1.1
