@@ -1,3 +1,9 @@
+import sys
+
+if len(sys.argv) != 2 or sys.argv[1] == 'help':
+    printl("USAGE: " + sys.argv[0] + " BOT_TOKEN")
+    sys.exit(0)
+
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
@@ -12,8 +18,7 @@ from fuzzywuzzy import utils as fuzzyutils
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-
-updater = Updater(token='671191771:AAFx_sGQGoHvjgwCBDROPsj3_VudgfFm2qg', use_context=True)
+updater = Updater(token=sys.argv[1], use_context=True)
 dispatcher = updater.dispatcher
 
 def start(update, context):
