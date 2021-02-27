@@ -58,6 +58,21 @@ def do(update, context):
 
 dispatcher.add_handler(CommandHandler('do', do))
 
+def undo(update, context):
+    task_ids = db.get_task_ids_from_context(update.effective_user, context)
+
+    for task_id in task_ids:
+        task = db.get_task(update.effective_user, task_id)
+        task.undo()
+        db.update_task(update.effective_user, task)
+
+    for id in task_ids:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                text='undone task: ' + str(db.get_task(update.effective_user, id))
+        )
+
+dispatcher.add_handler(CommandHandler('undo', undo))
+
 
 def new_task(update, context):
     db.add_task(update.effective_user, pydo.Task(update.message.text))
