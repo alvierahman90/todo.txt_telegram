@@ -30,6 +30,9 @@ def ls(update, context):
     tasks = db.get_all_user_tasks(update.effective_user)
     r = ""
     for task in tasks:
+        if str(task) == "":
+            continue
+
         if task.done is ('done' in update.message['text']) or ('all' in update.message['text']):
             r+= f"{task.id} {str(task)}"
             r+= '\n'
