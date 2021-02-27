@@ -5,6 +5,9 @@ import json
 import pydo
 import telegram
 
+from fuzzywuzzy import process as fuzzyprocess
+from fuzzywuzzy import utils as fuzzyutils
+
 DB_FILE="./db.json"
 
 class DbKeys:
@@ -49,6 +52,10 @@ def get_task(user: telegram.User, task_id: int) -> pydo.Task:
         if int(task.id) == int(task_id):
             return task
 
+def fuzzy_get_task_id(user, text):
+    task_strs = [str(task) for task in get_all_user_tasks(user)]
+    return task_strs.index(fuzzyprocess.extractOne(text, task_strs)[0])
+
 def create_user(db, user: telegram.User):
     if str(user.id) not in db[DbKeys.USER_TASKS].keys():
         db[DbKeys.USER_TASKS][str(user.id)] = []
@@ -70,15 +77,21 @@ def update_task(user: telegram.User, new_task: pydo.Task) -> pydo.Task:
     _set_db(db)
     return new_task
 
-def remove_task(user: telegram.User, task_id: int) -> int:
+def remove_task_by_id(user: telegram.User, task_id: int) -> int:
     db = _get_db()
     # instead of removing an item, set it's text value to nothing, so that all other tasks' ids
     # don't change
-    db[DbKeys.USER_TASKS][str(user.id)][str(task_id)] = ""
+    if db[DbKeys.USER_TASKS][str(user.id)][task_id]:
+        task = pydo.Task(db[DbKeys.USER_TASKS][str(user.id)][task_id])
+    else:
+        task = None
+
+    db[DbKeys.USER_TASKS][str(user.id)][task_id] = ""
     _set_db(db)
+    return task
 
 def remove_task(user: telegram.User, task: pydo.Task) -> pydo.Task:
-    remove_task(user.id, task.id)
+    remove_task_by_id(user.id, task.id)
     return task
 
 try:

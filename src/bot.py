@@ -11,8 +11,7 @@ from telegram.ext import MessageHandler, Filters
 import logging
 import db
 import pydo
-from fuzzywuzzy import process as fuzzyprocess
-from fuzzywuzzy import utils as fuzzyutils
+
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -44,7 +43,7 @@ dispatcher.add_handler(CommandHandler('ls', ls))
 def do(update, context):
     for arg in context.args:
         if not arg.isnumeric():
-            task_ids = [fuzzy_get_task_id(update.effective_user, ' '.join(context.args))]
+            task_ids = [db.fuzzy_get_task_id(update.effective_user, ' '.join(context.args))]
             break
     else:
         task_ids = [int(x) for x in context.args]
