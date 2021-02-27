@@ -54,6 +54,16 @@ def fuzzy_get_task_id(user, text):
     task_strs = [str(task) for task in get_all_user_tasks(user)]
     return task_strs.index(fuzzyprocess.extractOne(text, task_strs)[0])
 
+def get_task_ids_from_context(user, context):
+    for arg in context.args:
+        if not arg.isnumeric():
+            task_ids = [fuzzy_get_task_id(user, ' '.join(context.args))]
+            break
+    else:
+        task_ids = [int(x) for x in context.args]
+
+    return task_ids
+
 def create_user(db, user: telegram.User):
     if str(user.id) not in db[DbKeys.USER_TASKS].keys():
         db[DbKeys.USER_TASKS][str(user.id)] = []

@@ -44,12 +44,7 @@ def ls(update, context):
 dispatcher.add_handler(CommandHandler('ls', ls))
 
 def do(update, context):
-    for arg in context.args:
-        if not arg.isnumeric():
-            task_ids = [db.fuzzy_get_task_id(update.effective_user, ' '.join(context.args))]
-            break
-    else:
-        task_ids = [int(x) for x in context.args]
+    task_ids = db.get_task_ids_from_context(update.effective_user, context)
 
     for task_id in task_ids:
         task = db.get_task(update.effective_user, task_id)
@@ -72,13 +67,7 @@ def new_task(update, context):
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), new_task))
 
 def delete(update, context):
-    print(db._get_db())
-    for arg in context.args:
-        if not arg.isnumeric():
-            task_ids = [db.fuzzy_get_task_id(update.effective_user, ' '.join(context.args))]
-            break
-    else:
-        task_ids = [int(x) for x in context.args]
+    task_ids = db.get_task_ids_from_context(update.effective_user, context)
 
     for task_id in task_ids:
         task = db.remove_task_by_id(update.effective_user, task_id)
