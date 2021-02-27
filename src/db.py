@@ -31,6 +31,8 @@ def get_all_user_tasks(user) -> "list of pydo.Task":
     r = []
 
     for id, task_str in enumerate(task_list):
+        if task_str == '':
+            continue
         task = pydo.Task(task_str)
         task.id = id
         r.append(task)
