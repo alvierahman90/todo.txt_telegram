@@ -53,11 +53,10 @@ def do(update, context):
         task.do()
         db.update_task(update.effective_user, task)
 
-    context.bot.send_message(chat_id=update.effective_chat.id, text=str(task_ids))
-
-def fuzzy_get_task_id(user, text):
-    task_strs = [str(task) for task in db.get_all_user_tasks(user)]
-    return task_strs.index(fuzzyprocess.extractOne(text, task_strs)[0])
+    for id in task_ids:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                text='completed task: ' + str(db.get_task(update.effective_user, id))
+        )
 
 dispatcher.add_handler(CommandHandler('do', do))
 
@@ -65,8 +64,31 @@ dispatcher.add_handler(CommandHandler('do', do))
 def new_task(update, context):
     db.add_task(update.effective_user, pydo.Task(update.message.text))
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text=f"Created task: {update.message.text}")
+                             text=f"created task: {update.message.text}")
 
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), new_task))
+
+def delete(update, context):
+    print(db._get_db())
+    for arg in context.args:
+        if not arg.isnumeric():
+            task_ids = [db.fuzzy_get_task_id(update.effective_user, ' '.join(context.args))]
+            break
+    else:
+        task_ids = [int(x) for x in context.args]
+
+    for task_id in task_ids:
+        task = db.remove_task_by_id(update.effective_user, task_id)
+
+        if task is None:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                    text="task not found :("
+            )
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text=f"deleted task: {task}")
+
+
+dispatcher.add_handler(CommandHandler('delete', delete))
 
 updater.start_polling()
