@@ -3,3 +3,5 @@ tasks.json
 db.json
 env
 __pycache__
+start.sh
+*.swp
