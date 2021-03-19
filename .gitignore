@@ -1,7 +1,4 @@
-config.json
-tasks.json
-db.json
+config
 env
 __pycache__
-start.sh
 *.swp
