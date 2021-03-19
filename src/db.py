@@ -56,9 +56,9 @@ def update_task(user: telegram.User, new_task: pydo.Task) -> pydo.Task:
 def remove_task_by_id(user: telegram.User, task_id: int) -> int:
     # instead of removing an item, set it's text value to nothing, so that all other tasks' ids
     # don't change
-    task = get_task(task_id)
+    task = get_task(user, task_id)
     if task is not None:
-        update_task(user, Task(""))
+        update_task(user, pydo.Task("", id=task_id))
 
     return task
 
