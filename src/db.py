@@ -1,49 +1,30 @@
-
-# this is a temporary db to get things working
-
-import json
 import pydo
 import telegram
+import redis
 
 from fuzzywuzzy import process as fuzzyprocess
 from fuzzywuzzy import utils as fuzzyutils
 
-DB_FILE="./db.json"
+def _redis_user_tasks_key(user_id):
+    return f'user_tasks:{user_id}'
 
-class DbKeys:
-    USER_TASKS = 'user_tasks'
-
-def _create_db():
-    db = {
-            DbKeys.USER_TASKS : {}
-            }
-    with open(DB_FILE, "w+") as file:
-        json.dump(db, file)
-
-def _get_db():
-    with open(DB_FILE) as file:
-        return json.load(file)
-
-def _set_db(db):
-    with open(DB_FILE, "w") as file:
-        json.dump(db, file)
+r = redis.Redis(host='localhost', port=6379,
+        charset='utf-8', decode_responses=True)
 
 def get_all_user_tasks(user) -> "list of pydo.Task":
-    db = _get_db()
-    task_list = db[DbKeys.USER_TASKS][str(user.id)]
-    r = []
+    global r
+    task_list = r.lrange(_redis_user_tasks_key(user.id), 0, -1)
+    response = []
 
     for id, task_str in enumerate(task_list):
         task = pydo.Task(task_str)
         task.id = id
-        r.append(task)
+        response.append(task)
 
-    return r
+    return response
 
 def export_user_tasks(user: telegram.User) -> str:
-    db = _get_db()
-    print(db)
-    return '\n'.join(db[DbKeys.USER_TASKS][str(user.id)])
+    return '\n'.join(r.lrange(_redis_user_tasks_key(user.id)), 0, -1)
 
 def get_task(user: telegram.User, task_id: int) -> pydo.Task:
     for task in get_all_user_tasks(user):
@@ -64,45 +45,22 @@ def get_task_ids_from_context(user, context):
 
     return task_ids
 
-def create_user(db, user: telegram.User):
-    if str(user.id) not in db[DbKeys.USER_TASKS].keys():
-        db[DbKeys.USER_TASKS][str(user.id)] = []
-
-    return db
-
-
 def add_task(user: telegram.User, task: pydo.Task) -> pydo.Task:
-    db = _get_db()
-    db = create_user(db, user)
-
-    db[DbKeys.USER_TASKS][str(user.id)].append(str(task))
-    _set_db(db)
+    r.rpush(_redis_user_tasks_key(user.id), str(task))
     return task
 
 def update_task(user: telegram.User, new_task: pydo.Task) -> pydo.Task:
-    db = _get_db()
-    db[DbKeys.USER_TASKS][str(user.id)][new_task.id] = str(new_task)
-    _set_db(db)
+    r.lset(_redis_user_tasks_key(user.id), new_task.id, str(new_task))
     return new_task
 
 def remove_task_by_id(user: telegram.User, task_id: int) -> int:
-    db = _get_db()
     # instead of removing an item, set it's text value to nothing, so that all other tasks' ids
     # don't change
-    if db[DbKeys.USER_TASKS][str(user.id)][task_id]:
-        task = pydo.Task(db[DbKeys.USER_TASKS][str(user.id)][task_id])
-    else:
-        task = None
+    task = get_task(task_id)
+    if task is not None:
+        update_task(user, Task(""))
 
-    db[DbKeys.USER_TASKS][str(user.id)][task_id] = ""
-    _set_db(db)
     return task
 
 def remove_task(user: telegram.User, task: pydo.Task) -> pydo.Task:
-    remove_task_by_id(user.id, task.id)
-    return task
-
-try:
-    _get_db()
-except:
-    _create_db()
+    return remove_task_by_id(user.id, task.id)
